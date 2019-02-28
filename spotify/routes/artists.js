@@ -17,16 +17,19 @@ spotifyApi.clientCredentialsGrant()
   .catch(error => {
     console.log('Something went wrong when retrieving an access token', error);
   });
+
 /* GET users listing. */
-router.get('/', (req, res, next) => {
-  spotifyApi.searchArtists(/* 'HERE GOES THE QUERY ARTIST' */)
-    .then(data => {
-      console.log('The received data from the API: ', data.body);
+router.get('/', async (req, res, next) => {
+  const { artist } = req.query;
+  try {
+    const artists = await spotifyApi.searchArtists(artist); // artists.body.artists.items;}
+    const list = artists.body.artists.items;
+    console.log(list);
+    res.render('artists', { list });
     // ----> 'HERE WHAT WE WANT TO DO AFTER RECEIVING THE DATA FROM THE API'
-    })
-    .catch(err => {
-      console.log('The error while searching artists occurred: ', err);
-    });
+  } catch (error) {
+    next(error);
+  };
 });
 
 module.exports = router;
